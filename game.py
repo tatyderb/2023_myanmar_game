@@ -37,6 +37,21 @@ player_y = screen_height - player_height
 player_velocity = 1
 player_dx = 0
 
+# пуля
+bullet_img = pg.image.load('resources/img/bullet.png')
+bullet_width = bullet_img.get_width()
+bullet_height = bullet_img.get_height()
+bullet_x = 0
+bullet_y = 0
+bullet_dy = -2
+bullet_visible = False  # есть пуля в игре True, или её нет False
+
+def bullet_create():
+    global bullet_y, bullet_x, bullet_visible
+    bullet_x = player_x
+    bullet_y = player_y - bullet_height
+    bullet_visible = True
+
 running = True
 while running:
     # изменяем математическую модель
@@ -44,10 +59,20 @@ while running:
     if player_x < 0:
         player_x = 0
 
+    # пуля летит, если она видна
+    if bullet_visible:
+        bullet_y = bullet_y + bullet_dy
+        # если пуля улетела за границу экрана, ее не видно
+        if bullet_y < 0:
+            bullet_visible = False
+            print(f"{bullet_visible=}")
+
     # рисовать
     # display.fill('blue', (20, 50, 100, 250))
     display.blit(background_img, (0, 0))
     display.blit(player_img, (player_x, player_y))
+    if bullet_visible:
+        display.blit(bullet_img, (bullet_x, bullet_y))
     pg.display.update()
 
     # получить события игры и обработать их
@@ -69,6 +94,12 @@ while running:
             player_dx = - 0
         if event.type == pg.KEYUP and event.key == pg.K_RIGHT:
             player_dx = 0
+
+        # стреляем по клавише ПРОБЕЛ
+        if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
+            if not bullet_visible:
+                bullet_create()
+                print('Fire!')
 
 
 
