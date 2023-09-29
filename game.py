@@ -12,7 +12,6 @@ icon_img = pg.image.load('resources/img/ufo.png')
 pg.display.set_icon(icon_img)
 
 background_img = pg.image.load('resources/img/background.png')
-display.blit(background_img, (0, 0))
 
 # шрифт для букв
 sysfont = pg.font.SysFont('arial', 40)
@@ -35,11 +34,19 @@ player_width = player_img.get_width()
 player_height = player_img.get_height()
 player_x = screen_width / 2 - player_width / 2
 player_y = screen_height - player_height
+player_velocity = 1
+player_dx = 0
 
 running = True
 while running:
+    # изменяем математическую модель
+    player_x = player_x + player_dx
+    if player_x < 0:
+        player_x = 0
+
     # рисовать
     # display.fill('blue', (20, 50, 100, 250))
+    display.blit(background_img, (0, 0))
     display.blit(player_img, (player_x, player_y))
     pg.display.update()
 
@@ -52,6 +59,16 @@ while running:
         if event.type == pg.KEYDOWN and event.key == pg.K_q:
             running = False
 
+        # клавиши <- и -> игрок движется влево или вправо
+        if event.type == pg.KEYDOWN and event.key == pg.K_LEFT:
+            player_dx = - player_velocity
+        if event.type == pg.KEYDOWN and event.key == pg.K_RIGHT:
+            player_dx = player_velocity
+        # отпустила клавишу - игрок СТОП!!!!!
+        if event.type == pg.KEYUP and event.key == pg.K_LEFT:
+            player_dx = - 0
+        if event.type == pg.KEYUP and event.key == pg.K_RIGHT:
+            player_dx = 0
 
 
 
