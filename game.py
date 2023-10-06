@@ -58,6 +58,8 @@ while running:
     player_x = player_x + player_dx
     if player_x < 0:
         player_x = 0
+    if player_x + player_width > screen_width:
+        player_x = screen_width - player_width
 
     # пуля летит, если она видна
     if bullet_visible:
