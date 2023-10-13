@@ -46,6 +46,21 @@ bullet_y = 0
 bullet_dy = -2
 bullet_visible = False  # есть пуля в игре True, или её нет False
 
+# enemy
+enemy_img = pg.image.load('resources/img/enemy.png')
+enemy_width = enemy_img.get_width()
+enemy_height = enemy_img.get_height()
+enemy_x = player_x
+enemy_y = 0
+enemy_dx = 0
+enemy_dy = 1
+
+import random
+def enemy_create():
+    global enemy_x, enemy_y
+    enemy_x = random.randint(0, screen_width)
+    enemy_y = 0
+
 def bullet_create():
     global bullet_y, bullet_x, bullet_visible
     bullet_x = player_x
@@ -56,6 +71,12 @@ def model_update():
     """ Изменяет математическую модель игры."""
     player_model()
     bullet_model()
+    enemy_model()
+
+def enemy_model():
+    global enemy_x, enemy_y
+    enemy_x += enemy_dx
+    enemy_y += enemy_dy
 
 def player_model():
     # изменяем математическую модель
@@ -75,6 +96,14 @@ def bullet_model():
         if bullet_y < 0:
             bullet_visible = False
             print(f"{bullet_visible=}")
+        # если пуля попала во врага
+        rect_bullet = pg.Rect(bullet_x, bullet_y, bullet_width, bullet_height)
+        rect_enemy = pg.Rect(enemy_x, enemy_y, enemy_width, enemy_height)
+        # есть пересечение прямоугольников?
+        if (rect_enemy.colliderect(rect_bullet)):
+            print('BANG!!!!')
+            enemy_create()
+
 
 def redraw():
     # рисовать
@@ -83,6 +112,7 @@ def redraw():
     display.blit(player_img, (player_x, player_y))
     if bullet_visible:
         display.blit(bullet_img, (bullet_x, bullet_y))
+    display.blit(enemy_img, (enemy_x, enemy_y))
     pg.display.update()
 
 def event_process():
@@ -117,6 +147,7 @@ def event_process():
 
     return running
 
+# все функции закончились, опять global namespace
 running = True
 while running:
     model_update()
