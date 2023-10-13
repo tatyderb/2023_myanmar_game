@@ -52,16 +52,23 @@ def bullet_create():
     bullet_y = player_y - bullet_height
     bullet_visible = True
 
-running = True
-while running:
+def model_update():
+    """ Изменяет математическую модель игры."""
+    player_model()
+    bullet_model()
+
+def player_model():
     # изменяем математическую модель
+    global player_x
     player_x = player_x + player_dx
     if player_x < 0:
         player_x = 0
     if player_x + player_width > screen_width:
         player_x = screen_width - player_width
 
+def bullet_model():
     # пуля летит, если она видна
+    global bullet_visible, bullet_y
     if bullet_visible:
         bullet_y = bullet_y + bullet_dy
         # если пуля улетела за границу экрана, ее не видно
@@ -69,6 +76,7 @@ while running:
             bullet_visible = False
             print(f"{bullet_visible=}")
 
+def redraw():
     # рисовать
     # display.fill('blue', (20, 50, 100, 250))
     display.blit(background_img, (0, 0))
@@ -77,6 +85,10 @@ while running:
         display.blit(bullet_img, (bullet_x, bullet_y))
     pg.display.update()
 
+def event_process():
+    """ Обработка событий: клавиши, мышь, Х """
+    global player_dx
+    running = True
     # получить события игры и обработать их
     for event in pg.event.get():
         # нажали на Х и закрыли окно
@@ -103,7 +115,13 @@ while running:
                 bullet_create()
                 print('Fire!')
 
+    return running
 
+running = True
+while running:
+    model_update()
+    redraw()
+    running = event_process()
 
 pg.quit()
 
